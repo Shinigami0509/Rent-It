@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // prepare SQL statement
-    $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
+    $sql = "SELECT id FROM users WHERE email = '$email' AND password = '$password'";
 
     // execute SQL statement
     $result = mysqli_query($conn, $sql);
@@ -23,8 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // check if any rows were returned
     if (mysqli_num_rows($result) > 0) {
         // login successful
+        $row = mysqli_fetch_assoc($result);
+        $user_id = $row["id"];
         session_start();
-        $_SESSION["email"] = $email;
+        $_SESSION["user_id"] = $user_id;
         header("Location: dashboard.html");
         exit();
     } else {
