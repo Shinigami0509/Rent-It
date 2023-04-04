@@ -10,9 +10,9 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    border-radius: 50%;
     margin: 0 auto;
-    padding: 0 20px;
+    object-position: center;
 }
 
 header {

@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_id = $row["id"];
         session_start();
         $_SESSION["user_id"] = $user_id;
-        header("Location: dashboard.html");
+        header("Location: dashboard.php");
         exit();
     } else {
         // login failed

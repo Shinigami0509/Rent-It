@@ -66,22 +66,28 @@ mysqli_close($conn);
 
 /* Style for the header */
 .header {
-  padding: 10px 0;
-  border-bottom: 2px solid #ddd;
-  text-align: center;
   font-size: 36px;
-  font-weight: bold;
-  color: #333;
+  color: #fff;
+  background-color: #ff8c00; /* set a bright orange background color */
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); /* add a subtle drop shadow */
 }
+
 
 /* Style for the profile picture */
 .profile-picture {
   display: block;
-  max-width: 150px;
   height: auto;
-  border-radius: 50%;
-  margin: 0 auto;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;  
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* Style for the profile details */
@@ -176,7 +182,7 @@ li a[href="logout.php"]:hover {
 <div class="container">
     <h1 class="header">My Profile</h1>
     <div class="profile">
-        <img class="profile-picture" src="uploads/profile_pictures/<?php echo $profile_picture_path; ?>" alt="Profile Picture">
+        <img class="profile-picture" src="<?php echo $profile_picture_path; ?>" alt="Profile Picture">
         <div class="profile-details">
             <p class="name">Name: <?php echo $name; ?></p>
             <p class="email">Email: <?php echo $email; ?></p>
