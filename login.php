@@ -31,7 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         // login failed
-        echo "Invalid email or password.";
+        echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
+        echo "<p style=\"font-size: 24px; color: #333;\">Invalid email or password.</p>";
+        echo "<a href=\"login.html\" style=\"display: inline-block; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;\">Try Again</a>";
+        echo "</div>";
+
     }
 
     // close connection

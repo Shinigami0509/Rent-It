@@ -4,7 +4,12 @@ session_start();
 
 // check if user is logged in
 if (!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
+  echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
+  echo "<p style=\"font-size: 24px; color: #333;\">You have not logged in.</p>";
+  echo "<a href=\"login.html?redirect=true\" style=\"display: inline-block; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;\">Click here to go to the login page</a>";
+
+  echo "</div>";
+    
     exit();
 }
 
