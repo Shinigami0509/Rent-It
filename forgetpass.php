@@ -59,7 +59,7 @@
     </form>     
   
 
-  <?php
+    <?php
   use PHPMailer\PHPMailer\PHPMailer;
   use PHPMailer\PHPMailer\Exception;
 
@@ -72,16 +72,25 @@
     // Retrieve the user's email address from the form data
     $email = $_POST["email"];
 
-    // Generate a random 6-digit OTP
-    $otp = rand(100000, 999999);
-
-    // Store the OTP in the database
+    // Check if email is registered in the database
     $conn = mysqli_connect("localhost", "root", "", "rentit");
+    $sql = "SELECT * FROM users WHERE email='$email'";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) == 0) {
+      header("Location: error.php");
+exit();
+
+    }
+
+    // Email is registered, generate OTP and store it in database
+    $otp = rand(100000, 999999);
     $sql = "UPDATE users SET otp='$otp' WHERE email='$email'";
     mysqli_query($conn, $sql);
+    mysqli_close($conn);
     header("Location: verifyotp.php");
+
+    // Send an email to the user with the OTP using PHPMailer
     try {
-      // Send an email to the user with the OTP using PHPMailer
       $mail = new PHPMailer(true);
 
       $mail->isSMTP();
@@ -92,7 +101,7 @@
       $mail->SMTPSecure = 'ssl';
       $mail->Port       = 465;
 
-      $mail->setFrom('walidbin.kamal64@gmail.com');
+      $mail->setFrom('walidbin.kamal64@gmail.com', 'Rent It');
       $mail->addAddress($email);
 
       $mail->isHTML(true);
@@ -105,8 +114,7 @@
       echo "Error sending email: {$mail->ErrorInfo}";
     }
   }
-  
-  ?>
+?>
 </body>
 
 </html>

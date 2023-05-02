@@ -60,20 +60,26 @@
 	if (isset($_POST["verify"])) {
 		// Retrieve the OTP and email from the form data
 		$otp = $_POST["otp"];
-		$email = $_SESSION["email"];
+		
+		if (isset($_SESSION["email"])) {
+			$email = $_SESSION["email"];
 
-		// Retrieve the OTP from the database for the email address
-		$conn = mysqli_connect("localhost", "root", "", "rentit");
-		$sql = "SELECT * FROM users WHERE email='$email'";
-		$result = mysqli_query($conn, $sql);
-		$row = mysqli_fetch_assoc($result);
+			// Retrieve the OTP from the database for the email address
+			$conn = mysqli_connect("localhost", "root", "", "rentit");
+			$sql = "SELECT * FROM users WHERE email='$email'";
+			$result = mysqli_query($conn, $sql);
+			$row = mysqli_fetch_assoc($result);
 
-		if ($row && $row["otp"] == $otp) {
-			// The OTP is correct. Show the password reset form.
-			echo "<form action='resetpassword.php' method='post'>";			
+			if ($row && $row["otp"] == $otp) {
+				// The OTP is correct. Show the password reset form.
+				echo "<form action='resetpassword.php' method='post'>";			
+			} else {
+				// The OTP is incorrect. Show an error message.
+				echo "<div class='error'>Invalid OTP. Please try again.</div>";
+			}
 		} else {
-			// The OTP is incorrect. Show an error message.
-			echo "<div class='error'>Invalid OTP. Please try again.</div>";
+			// The email key is not set in the session. Show an error message.
+			echo "<div class='error'>Invalid email address.</div>";
 		}
 	}
 	?>
@@ -83,4 +89,6 @@
 		<input type="submit" name="verify" value="Verify OTP">
 	</form>
 </body>
+
+
 </html>

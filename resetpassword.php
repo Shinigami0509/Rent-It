@@ -3,63 +3,104 @@
 <head>
 	<title>Reset Password</title>
 	<style>
-		form {
-			margin: 50px auto;
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f5f5f5;
+		}
+
+		.container {
+			margin: 0 auto;
 			padding: 20px;
 			width: 400px;
-			border: 2px solid #ddd;
+			background-color: #fff;
 			border-radius: 5px;
-			box-shadow: 0px 0px 5px #ddd;
-			background-color: #f7f7f7;
-			font-family: sans-serif;
-			font-size: 16px;
+			box-shadow: 0px 0px 10px #888888;
 		}
+
+		h2 {
+			text-align: center;
+			margin-top: 0;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 10px;
+		}
+
 		input[type="password"] {
+			width: 100%;
 			padding: 10px;
-			margin: 10px 0;
-			border: none;
+			border: 1px solid #ccc;
 			border-radius: 5px;
-			box-shadow: 0px 0px 3px #ddd;
-			font-size: 16px;
+			margin-bottom: 20px;
+			box-sizing: border-box;
 		}
+
 		input[type="submit"] {
+			background-color: #4CAF50;
+			color: #fff;
 			padding: 10px 20px;
 			border: none;
 			border-radius: 5px;
-			background-color: #4CAF50;
-			color: #fff;
-			font-size: 16px;
 			cursor: pointer;
+			font-size: 16px;
+			margin-bottom: 20px;
 		}
+
 		input[type="submit"]:hover {
 			background-color: #3e8e41;
+		}
+
+		.success {
+			color: #4CAF50;
+			text-align: center;
+			margin-bottom: 20px;
 		}
 	</style>
 </head>
 <body>
 	<?php
-		if (isset($_POST["reset"])) {
-			// Retrieve the new password and email from the form data
-			$email = $_POST["email"];
-			$new_password = $_POST["new_password"];
+	session_start();
 
-			// Update the password in the database for the email address
-			$conn = mysqli_connect("localhost", "root", "", "rentit");
-			$sql = "UPDATE users SET password='$new_password', otp='' WHERE email='$email'";
-			mysqli_query($conn, $sql);
+	// Check if the form has been submitted for resetting the password
+	if (isset($_POST["reset"])) {
+		// Retrieve the new password and email from the form data
+		$new_password = $_POST["new_password"];
+		$email = $_SESSION["email"];
 
-			echo "<p>Password has been reset successfully.</p>";
-			echo "<a href='login.html'>Go to login page</a>";
+		// Check if the password and confirm password fields match
+		if ($_POST["new_password"] != $_POST["confirm_password"]) {
+			echo "<div class='error'>Passwords do not match. Please try again.</div>";
 		} else {
-			echo "<form action='resetpassword.php' method='post'>";
-			echo "<input type='hidden' name='email' value='{$_GET["email"]}'>";
-			echo "<label for='new_password'>New Password:</label>";
-			echo "<input type='password' id='new_password' name='new_password' required><br><br>";
-			echo "<label for='confirm_password'>Confirm Password:</label>";
-			echo "<input type='password' id='confirm_password' name='confirm_password' required><br><br>";
-			echo "<input type='submit' name='reset' value='Reset Password'>";
-			echo "</form>";
+			// Update the password in the database
+			$conn = mysqli_connect("localhost", "root", "", "rentit");
+			$sql = "UPDATE users SET password='" . md5($new_password) . "' WHERE email='$email'";
+			$result = mysqli_query($conn, $sql);
+
+			if (!isset($_SESSION["user_id"])) {
+				echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
+				echo "<p style=\"font-size: 24px; color: #333;\">Your password has been reset successfully.</p>";
+				echo "<a href=\"login.html?redirect=true\" style=\"display: inline-block; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;\">Click here to go to the login page</a>";
+			  
+				echo "</div>";
+				  
+				  exit();
+			  } else {
+				// Password reset failed. Show error message
+				echo "<div class='error'>An error occurred while resetting your password. Please try again later.</div>";
+			}
 		}
+	}
 	?>
+	<div class="container">
+		<h2>Reset Password</h2>
+		<form action="" method="post">
+			<label for="new_password">New Password:</label>
+			<input type="password" id="new_password" name="new_password" required>
+			<label for="confirm_password">Confirm Password:</label>
+			<input type="password" id="confirm_password" name="confirm_password" required>
+			<input type="submit" name="reset" value="Reset Password">
+		</form>
+	</div>
 </body>
 </html>
