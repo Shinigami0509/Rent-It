@@ -23,14 +23,17 @@ if (isset($_POST["verify"])) {
             exit(); // stop executing the current script
         } else {
             // The OTP is incorrect. Show an error message.
-            echo "<div class='error'>Invalid OTP. Please try again.</div>";
+            echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
+			echo "<p style=\"font-size: 24px; color: #333;\">Invalid OTP. Please try again.</p>";
+            echo "</div>";           
         }
     } else {
         // The email key is not set in the session. Show an error message.
-        echo "<div class='error'>Invalid email address.</div>";
+        header("location: login.html");
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>

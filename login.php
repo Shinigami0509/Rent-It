@@ -27,6 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_id = $row["id"];
         session_start();
         $_SESSION["user_id"] = $user_id;
+
+        // update the user's record with the user_id
+        $update_sql = "UPDATE users SET user_id = '$user_id' WHERE email = '$email'";
+        mysqli_query($conn, $update_sql);
+
         header("Location: dashboard.php");
         exit();
     } else {
@@ -35,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<p style=\"font-size: 24px; color: #333;\">Invalid email or password.</p>";
         echo "<a href=\"login.html\" style=\"display: inline-block; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;\">Try Again</a>";
         echo "</div>";
-
     }
 
     // close connection

@@ -37,7 +37,7 @@ if (mysqli_num_rows($result) > 0) {
     $name = $row["fullname"];
     $email = $row["email"];
     $nid = $row["nid"];
-    $phone = $row["phone"];
+    $phone = $row["phone"];    
     $profile_picture_path = $row["profile_picture_path"];
 } else {
     // user not found
@@ -143,6 +143,22 @@ body {
   cursor: pointer;
 }
 
+.rent {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+.rent:hover {
+  background-color: #0069d9;
+  cursor: pointer;
+}
+
 
 ul.logout {
     list-style: none;
@@ -172,6 +188,7 @@ li a[href="logout.php"]:hover {
 
 
 
+
 </style>
 
 <head>
@@ -187,7 +204,10 @@ li a[href="logout.php"]:hover {
             <p class="name">Name: <?php echo $name; ?></p>
             <p class="email">Email: <?php echo $email; ?></p>
             <p class="nid">NID: <?php echo $nid; ?></p>
-            <p class="phone">Phone: <?php echo $phone; ?></p>
+            <p class="phone">Phone: <?php echo $phone; ?></p>          
+            
+            <a href="addproduct.php" class="rent">Add product</a></br></br></br>           
+
             <a href="edit_profile.php" class="edit-profile-btn">Edit Profile</a>            
         </div>
         <ul class="logout">

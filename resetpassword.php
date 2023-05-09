@@ -82,20 +82,27 @@
 			$sql = "UPDATE users SET password ='$new_password' WHERE email='$email'";
 			$result = mysqli_query($conn, $sql);
 
-			if (!isset($_SESSION["user_id"])) {
+			if (isset($_SESSION["email"]))  {
 				echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
 				echo "<p style=\"font-size: 24px; color: #333;\">Your password has been reset successfully.</p>";
 				echo "<a href=\"login.html?redirect=true\" style=\"display: inline-block; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;\">Click here to go to the login page</a>";
 			  
 				echo "</div>";
+
+				// Unset all of the session variables
+				$_SESSION = array();
+
+				// Destroy the session
+				session_destroy();
 				  
 				  exit();
 			  } else {
 				// Password reset failed. Show error message
-				echo "<div class='error'>An error occurred while resetting your password. Please try again later.</div>";
+				header("location: login.html");
 			}
 		}
 	}
+	
 	?>
 	<div class="container">
 		<h2>Reset Password</h2>
