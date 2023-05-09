@@ -101,8 +101,7 @@
 				header("location: login.html");
 			}
 		}
-	}
-	
+	}	
 	?>
 	<div class="container">
 		<h2>Reset Password</h2>
