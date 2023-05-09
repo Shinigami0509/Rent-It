@@ -78,8 +78,7 @@
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) == 0) {
       header("Location: error.php");
-exit();
-
+      exit();
     }
 
     // Email is registered, generate OTP and store it in database
@@ -87,7 +86,10 @@ exit();
     $sql = "UPDATE users SET otp='$otp' WHERE email='$email'";
     mysqli_query($conn, $sql);
     mysqli_close($conn);
-    header("Location: verifyotp.php");
+
+    // Store the email in a session variable for use in otp.php
+    session_start();
+    $_SESSION["email"] = $email;
 
     // Send an email to the user with the OTP using PHPMailer
     try {
@@ -109,12 +111,13 @@ exit();
       $mail->Body    = "Your OTP is: $otp";
 
       $mail->send();
-      echo "<script>alert('Sent Successfully');</script>";
+      header("Location: verifyotp.php");
     } catch (Exception $e) {
       echo "Error sending email: {$mail->ErrorInfo}";
     }
   }
 ?>
+
 </body>
 
 </html>

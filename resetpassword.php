@@ -70,11 +70,16 @@
 
 		// Check if the password and confirm password fields match
 		if ($_POST["new_password"] != $_POST["confirm_password"]) {
-			echo "<div class='error'>Passwords do not match. Please try again.</div>";
+			echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
+			echo "<p style=\"font-size: 24px; color: #333;\">Passwords do not match. Please try again.</p>";
+
+			  
+			echo "</div>";
+			
 		} else {
 			// Update the password in the database
 			$conn = mysqli_connect("localhost", "root", "", "rentit");
-			$sql = "UPDATE users SET password='" . md5($new_password) . "' WHERE email='$email'";
+			$sql = "UPDATE users SET password ='$new_password' WHERE email='$email'";
 			$result = mysqli_query($conn, $sql);
 
 			if (!isset($_SESSION["user_id"])) {
