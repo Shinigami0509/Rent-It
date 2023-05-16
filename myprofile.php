@@ -208,7 +208,7 @@ li a[href="logout.php"]:hover {
             
             <a href="addproduct.php" class="rent">Add product</a></br></br></br>           
 
-            <a href="edit_profile.php" class="edit-profile-btn">Edit Profile</a>            
+            <a href="editprofile.php" class="edit-profile-btn">Edit Profile</a>            
         </div>
         <ul class="logout">
             <li><a href="logout.php">Logout</a></li>

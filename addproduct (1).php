@@ -1,53 +1,3 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $name = $_POST["name"];
-  $category = $_POST["category"];
-  $price = $_POST["price"];
-  $description = $_POST["description"];
-  
-  // Validate and process the form data further as needed
-  // For example, you can store the data in a database or perform other operations
-  
-  // Sample code to store the data in a database (assuming you have a database connection)
-  $servername = 'localhost';
-  $username = 'root';
-  $password = '';
-  $dbname = 'rentit';
-  
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // Prepare the SQL statement
-    $stmt = $conn->prepare("INSERT INTO uploads (name, category, price, description) VALUES (:name, :category, :price, :description)");
-    
-    // Bind the parameters
-    $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':category', $category);
-    $stmt->bindParam(':price', $price);
-    $stmt->bindParam(':description', $description);
-    
-    // Execute the statement
-    $stmt->execute();
-    
-    // Display success message
-    echo "Product added successfully!";
-  } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-  }
-  
-  // Close the database connection
-  $conn = null;
-}
-?>
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -161,7 +111,62 @@ form option {
     </style>  
 
     </head>
-        <body>        
+        <body>
+
+        <?php
+// Start the session if it's not already started
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+  // Redirect the user to the login page if they are not logged in
+  header('Location: login.html');
+  exit();
+}
+
+// Get the user_id from the session variable
+$user_id = $_SESSION['user_id'];
+
+// Check if the form has been submitted
+if (isset($_POST['submit'])) {
+  // Get the product information from the form
+  $name = $_POST['name'];
+  $category = $_POST['category'];
+  $price = $_POST['price'];
+  $description = $_POST['description'];
+  $image = $_FILES['image']['name'];
+
+  // Connect to the database (replace host, username, password, and database name with your own)
+  $connection = mysqli_connect('localhost', 'root', '', 'rentit');
+
+  // Check if the connection was successful
+  if (!$connection) {
+    die('Error connecting to the database');
+  }
+
+  // Prepare the SQL query to insert the product information into the uploads table
+  $sql = "INSERT INTO uploads (user_id, name, category, price, description, image) VALUES ('$user_id', '$name', '$category', '$price', '$description', '$image')";
+
+  // Execute the SQL query
+  $result = mysqli_query($connection, $sql);
+
+  // Check if the query was successful
+  if (!$result) {
+    die('Error inserting product information into the database');
+  }
+
+  // Upload the product image to the server (replace upload_path with the path where you want to save the image)
+  $upload_path = 'uploads/for_rent/';
+  move_uploaded_file($_FILES['image']['tmp_name'], $upload_path . $image);
+
+  // Close the database connection
+  mysqli_close($connection);
+
+  // Redirect the user to the products page (replace products.php with the name of your products page)
+  header('Location: products.php');
+  exit();
+}
+?>
 
         <div class="container">
          <h1>Add Products</h1>
@@ -225,7 +230,7 @@ form option {
         const description = document.querySelector('#product-description').value;
 
         // Do something with the values (e.g. send a request to the backend)
-        console.log(Adding product: ${name}, Price: ${price}, Description: ${description});
+        console.log(`Adding product: ${name}, Price: ${price}, Description: ${description}`);
 
         // Reset the form
         form.reset();

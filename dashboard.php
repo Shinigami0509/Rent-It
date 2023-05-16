@@ -60,7 +60,7 @@ mysqli_close($conn);
             <h1>Rent It</h1>
             <nav>
                 <ul>
-                    <li><a href="home.php"><img src="photos/demo-home.webp" alt="Home" class="profile-icon" title="Home"> </a></li>                    
+                    <li><a href="dashboard.php"><img src="photos/demo-home.webp" alt="Home" class="profile-icon" title="Home"> </a></li>                    
                     <li><a href="contact.php"><img src="photos/demo-contact.jpg" alt="Contact Us" class="profile-icon" title="Contact Us"></a></li>
                     <li><a href="cart.php"><img src="photos/demo-cart.webp" alt="My Cart" class="profile-icon" title="My Cart"></a></li>
                     <li><a href="myprofile.php"><img src="<?php echo $profile_picture_path; ?>" alt="My Profile" class="profile-icon" title="My Profile"></a></li>
