@@ -48,7 +48,7 @@ if (isset($_SESSION["user_id"])) {
 <body>
     <header>
     <div class="container">
-            <h1><a href="dashboard.php">Rent It</a></h1>
+        <h1><a href="dashboard.php">Rent It</a></h1>
             <nav>
             <ul>
   <li><a href="dashboard.php"><img src="photos/demo-home.webp" alt="Home" class="profile-icon" title="Home"> </a></li>

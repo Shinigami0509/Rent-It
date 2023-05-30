@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-// retrieve user ID from session
-$user_id = $_SESSION["user_id"];
-
 // connect to the database
 $conn = mysqli_connect("localhost", "root", "", "rentit");
 
@@ -11,6 +8,33 @@ $conn = mysqli_connect("localhost", "root", "", "rentit");
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
+
+
+// retrieve user ID from session
+if (isset($_SESSION["user_id"])) {
+    // User is logged in
+    // retrieve user ID from session
+    $user_id = $_SESSION["user_id"];
+    // prepare SQL statement to retrieve user data including profile picture path
+$sql = "SELECT * FROM users WHERE id = $user_id";
+
+// execute SQL statement
+$result = mysqli_query($conn, $sql);
+
+// check if any rows were returned
+if (mysqli_num_rows($result) > 0) {
+    // retrieve user data
+    $row = mysqli_fetch_assoc($result);    
+    $profile_picture_path = $row["profile_picture_path"];
+} else {
+    // user not found
+    echo "User not found.";
+    exit();
+}
+}
+
+
+
 
 // search functionality
 if (isset($_GET["search"])) {
@@ -218,26 +242,45 @@ section#rentals h2 {
     .search-button:hover {
         background-color: #555;
     }
+
+    section#rentals h2 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 50px; /* Add margin-top property */
+    text-align: center; /* Add text-align property */
+}
+
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
+<header>
+    <div class="container">
         <h1><a href="dashboard.php">Rent It</a></h1>
             <nav>
-                <ul>
-                    <li><a href="dashboard.php">Home</a></li>
-                    <li><a href="contact.php">Contact Us</a></li>
-                    <li><a href="cart.php">My Cart</a></li>
-                    <li><a href="myprofile.php">My Profile</a></li>
-                </ul>
+            <ul>
+  <li><a href="dashboard.php"><img src="photos/demo-home.webp" alt="Home" class="profile-icon" title="Home"> </a></li>
+  <li><a href="contact.php"><img src="photos/demo-contact.jpg" alt="Contact Us" class="profile-icon" title="Contact Us"></a></li>
+  <?php
+  if (isset($_SESSION["user_id"])) {
+    // User is logged in, show the profile picture and cart
+    echo '<li><a href="cart.php"><img src="photos/demo-cart.webp" alt="My Cart" class="profile-icon" title="My Cart"></a></li>';
+    echo '<li><a href="myprofile.php"><img src="' . $profile_picture_path . '" alt="My Profile" class="profile-icon" title="My Profile"></a></li>';
+  } else {
+    // User is not logged in, show login option and notification
+    echo '<li><a href="cart.php" onclick="showLoginNotification()"><img src="photos/demo-cart.webp" alt="My Cart" class="profile-icon" title="My Cart"></a></li>';
+    echo '<li><a href="login.html" onclick="showLoginNotification()"><img src="photos/login.jpg" alt="Log In" class="profile-icon" title="Log In"></a></li>';
+  }
+  ?>
+</ul>
             </nav>
         </div>
     </header>
 
     <section id="rentals">
-    <div class="container">
+    
         <h2>Available Rentals</h2>
+        <div class="container">
         <form class="search-form" method="GET" action="rentals.php">
                 <input class="search-input" type="text" name="search" placeholder="Search rentals">
                 <input class="search-button" type="submit" value="Search">
