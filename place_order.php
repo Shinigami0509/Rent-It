@@ -12,13 +12,31 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 $user_id = $_SESSION["user_id"];
-$name = $_POST['name'];
+$fullname = '';
+$phone = '';
 $address = $_POST['address'];
-$phone = $_POST['phone'];
 $voucher = $_POST['voucher'];
 
 // Connect to the database
 $conn = mysqli_connect("localhost", "root", "", "rentit");
+
+
+$sql = "SELECT * FROM users WHERE id = $user_id";
+
+// execute SQL statement
+$result = mysqli_query($conn, $sql);
+
+// check if any rows were returned
+if (mysqli_num_rows($result) > 0) {
+    // retrieve user data
+    $row = mysqli_fetch_assoc($result);
+    $name = $row["fullname"];    
+    $phone = $row["phone"];  
+} else {
+    // user not found
+    echo "User not found.";
+    exit();
+}
 
 // Check connection
 if (!$conn) {
@@ -30,45 +48,49 @@ if (!$conn) {
   exit();
 }
 
+// Get fullname and phone from the users table
+$getUserDataQuery = "SELECT fullname, phone FROM users WHERE id = '$user_id'";
+$result = mysqli_query($conn, $getUserDataQuery);
+if ($result && mysqli_num_rows($result) > 0) {
+  $row = mysqli_fetch_assoc($result);
+  $fullname = $row['fullname'];
+  $phone = $row['phone'];
+} else {
+  $response = array(
+    'success' => false,
+    'message' => 'Failed to retrieve user data from the users table.'
+  );
+  echo json_encode($response);
+  exit();
+}
+
 // Prepare the update query
-$updateQuery = "UPDATE users SET";
-$updateFields = array();
+$updateQuery = "UPDATE users SET address = '$address' WHERE id = '$user_id'";
 
-// Check if each field is edited and add it to the update query
-if (!empty($name)) {
-  $updateFields[] = "name = '$name'";
-}
-if (!empty($address)) {
-  $updateFields[] = "address = '$address'";
-}
-if (!empty($phone)) {
-  $updateFields[] = "phone = '$phone'";
-}
-if (!empty($voucher)) {
-  $updateFields[] = "voucher = '$voucher'";
-}
+// Execute the update query
+if (mysqli_query($conn, $updateQuery)) {
+  // Save the order to the orders table
+  $saveOrderQuery = "INSERT INTO orders (user_id, fullname, address, phone, voucher) VALUES ('$user_id', '$fullname', '$address', '$phone', '$voucher')";
 
-// Check if any fields are edited
-if (!empty($updateFields)) {
-  $updateQuery .= " " . implode(", ", $updateFields);
-  $updateQuery .= " WHERE id = '$user_id'";
+  if (mysqli_query($conn, $saveOrderQuery)) {
+    // Delete rented items from rented_items table for the user
+    $deleteRentedItemsQuery = "DELETE FROM rented_items WHERE user_id = '$user_id'";
+    mysqli_query($conn, $deleteRentedItemsQuery);
 
-  // Execute the update query
-  if (mysqli_query($conn, $updateQuery)) {
     $response = array(
       'success' => true,
-      'message' => 'User details updated successfully.'
+      'message' => 'User details updated successfully and order saved.'
     );
   } else {
     $response = array(
       'success' => false,
-      'message' => 'Failed to update user details.'
+      'message' => 'Failed to save order.'
     );
   }
 } else {
   $response = array(
     'success' => false,
-    'message' => 'No fields are edited.'
+    'message' => 'Failed to update user details.'
   );
 }
 
@@ -76,3 +98,4 @@ if (!empty($updateFields)) {
 mysqli_close($conn);
 
 echo json_encode($response);
+?>

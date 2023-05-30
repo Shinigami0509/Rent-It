@@ -332,3 +332,9 @@ if (mysqli_num_rows($result) > 0) {
     </footer>
 </body>
 </html>
+<script>
+  function showLoginNotification() {
+    alert("You are not logged in. Please click OK to go to the login page.");
+    window.location.href = "login.html";
+  }
+</script>

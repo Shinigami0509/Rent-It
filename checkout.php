@@ -1,3 +1,57 @@
+<?php
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+  // User not logged in
+  $response = array(
+    'success' => false,
+    'message' => 'User not logged in.'
+  );  
+  exit();
+}
+
+$user_id = $_SESSION["user_id"];
+$fullname = '';
+$phone = '';
+
+// Connect to the database
+$conn = mysqli_connect("localhost", "root", "", "rentit");
+
+// Check connection
+if (!$conn) {
+  $response = array(
+    'success' => false,
+    'message' => 'Database connection error.'
+  );  
+  exit();
+}
+
+// Get fullname and phone from the users table
+$getUserDataQuery = "SELECT fullname, phone FROM users WHERE id = '$user_id'";
+$result = mysqli_query($conn, $getUserDataQuery);
+if ($result && mysqli_num_rows($result) > 0) {
+  $row = mysqli_fetch_assoc($result);
+  $fullname = $row['fullname'];
+  $phone = $row['phone'];
+} else {
+  $response = array(
+    'success' => false,
+    'message' => 'Failed to retrieve user data from the users table.'
+  );  
+  exit();
+}
+
+
+// Close the database connection
+mysqli_close($conn);
+
+
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -102,21 +156,22 @@
 
   <div id="user-details">
     <h2>User Details</h2>
-    <form id="checkout-form">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" >
-      
-      <label for="address">Address:</label>
-      <input type="text" id="address" name="address" required>
-      
-      <label for="phone">Phone Number:</label>
-      <input type="text" id="phone" name="phone" >
-      
-      <label for="voucher">Voucher Code:</label>
-      <input type="text" id="voucher" name="voucher">
-      
-      <input type="submit" value="Place Order">
-    </form>
+    <form id="checkout-form" action="retrieve_data.php" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="<?php echo $fullname; ?>" readonly>
+
+  <label for="address">Address:</label>
+  <input type="text" id="address" name="address" required>
+
+  <label for="phone">Phone Number:</label>
+    <input type="text" id="phone" name="phone" value="<?php echo $phone; ?>" readonly>
+
+  <label for="voucher">Voucher Code:</label>
+  <input type="text" id="voucher" name="voucher">
+
+  <input type="submit" value="Place Order">
+</form>
+
   </div>
 
   <div id="checkout-message"></div>

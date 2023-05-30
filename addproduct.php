@@ -114,6 +114,9 @@ form option {
         <body>
 
         <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Connect to the database
 $conn = mysqli_connect("localhost", "root", "", "rentit");
@@ -123,113 +126,77 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Prepare the SQL statement
-$sql = "INSERT INTO rental_items (name, description, image, price, quantity) VALUES (?, ?, ?, ?, ?)";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Retrieve the form values
+    $name = $_POST["name"];
+    $category = $_POST["category"];
+    $price = $_POST["price"];
+    $description = $_POST["description"];
 
-// Prepare the statement
-$stmt = mysqli_prepare($conn, $sql);
+    // Handle the image file upload
+    $image = $_FILES["image"]["name"];
+    $image_tmp = $_FILES["image"]["tmp_name"];
+    $image_path = "uploads/" . $image;
 
-// Set the parameters
-$name = "My Product";
-$description = "This is my product description.";
-$image = "product.jpg";
-$price = 100;
-$quantity = 10;
+    // Move the uploaded file to the specified directory
+    move_uploaded_file($image_tmp, $image_path);
 
-// Bind the parameters
-mysqli_stmt_bind_param($stmt, "sssss", $name, $description, $image, $price, $quantity);
+    // Prepare the SQL statement
+    $sql = "INSERT INTO rental_items (name, description, image, price, quantity) VALUES (?, ?, ?, ?, ?)";
 
-// Execute the statement
-mysqli_stmt_execute($stmt);
+    // Prepare the statement
+    $stmt = mysqli_prepare($conn, $sql);
 
-// Check if a row was affected
-if (mysqli_affected_rows($conn) > 0) {
-    echo "Product added successfully.";
-} else {
-    echo "Error adding product.";
+    // Bind the parameters
+    mysqli_stmt_bind_param($stmt, "ssssd", $name, $description, $image_path, $price, $quantity);
+
+    // Set the quantity
+    $quantity = 10;
+
+    // Execute the statement
+    $result = mysqli_stmt_execute($stmt);
+
+    // Check if a row was affected
+    if ($result) {
+        echo "Product added successfully.";
+    } else {
+        echo "Error adding product: " . mysqli_error($conn);
+    }
+
+    // Close the statement
+    mysqli_stmt_close($stmt);
 }
-
-// Close the statement
-mysqli_stmt_close($stmt);
 
 // Close the connection
 mysqli_close($conn);
-
 ?>
-  
-  
 
+<div class="container">
+  <h1>Add Products</h1>
+  <form id="add-product-form" method="POST" enctype="multipart/form-data">
 
-        <div class="container">
-         <h1>Add Products</h1>
-        <form id="add-product-form">
+    <label for="name">Product Name:</label>
+    <input type="text" id="name" name="name" required>
 
-        <label for="name">Product Name:</label>
-        <input type="text" id="name" name="name">
+    <label for="category">Category:</label>
+    <select id="category" name="category" required>
+      <option value="option1">Tour</option>
+      <option value="option2">Vehicles</option>
+      <option value="option3">Party</option>
+      <option value="option4">Others</option>
+    </select>
 
-        <label for="category">Category:</label>
-        <select id="category" name="category">
-        <option value="option1">Tour </option>
-        <option value="option2">Vehicles </option>
-        <option value="option3">Party </option>
-        <option value="option4">Others </option>
-        </select>
-        
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price">
-        
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" rows="4" cols="50"></textarea>
-        
-        <label for="image">Image:</label>
-        <input type="file" id="image" name="image">
-        
-        <input type="submit" value="Add Product">
-      </form>   
-      
-    </div>
+    <label for="price">Price:</label>
+    <input type="number" id="price" name="price" required>
 
-    <script>
-      const form = document.querySelector('#add-product-form');
-      const category = document.querySelector('#product-category').value;
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" rows="4" cols="50" required></textarea>
 
-      const imagePreview = document.querySelector('#preview-image');
-      const captionPreview = document.querySelector('#preview-caption');
-      
-      // Show image preview when user selects an image
-      document.querySelector('#product-image').addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.addEventListener('load', function() {
-            imagePreview.setAttribute('src', reader.result);
-          });
-          reader.readAsDataURL(file);
-        }
-      });
-      
-      // Update caption preview as user types in description
-      document.querySelector('#product-description').addEventListener('input', function() {
-        captionPreview.textContent = this.value;
-      });
-      
-      form.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the form from submitting
+    <label for="image">Image:</label>
+    <input type="file" id="image" name="image" required>
 
-        // Get the values from the form
-        const name = document.querySelector('#product-name').value;
-        const price = document.querySelector('#product-price').value;
-        const description = document.querySelector('#product-description').value;
-
-        // Do something with the values (e.g. send a request to the backend)
-        console.log(`Adding product: ${name}, Price: ${price}, Description: ${description}`);
-
-        // Reset the form
-        form.reset();
-        imagePreview.setAttribute('src', '#');
-        captionPreview.textContent = '';
-      });
-    </script>
-    
-  </body>
+    <input type="submit" value="Add Product">
+  </form>
+</div>
+</body>
 </html>
