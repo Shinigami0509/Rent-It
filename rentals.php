@@ -304,14 +304,14 @@ if (mysqli_num_rows($result) > 0) {
 
         // Display the rental item
         echo '<div class="rental-item">';
-        echo '<img src="' . $image . '" alt="' . $name . '">';
+        echo '<img src="' . $image . '" alt="' . $name . '" style="max-width: 100%; max-height: 200px;">';
         echo '<h3>' . $name . '</h3>';
         echo '<p>' . $description . '</p>';
 
         // Create the form for renting the item
         echo '<form method="post" action="rent.php">';
         echo '<input type="hidden" name="rental_id" value="' . $rental_id . '">';
-        echo '<input type="submit" name="rent_now" value="Rent Now" class="btn">';
+        echo '<input type="submit" name="rent_now" value="Rent Now" class="btn"></br></br>';
         echo '</form>';
 
         echo '</div>';
