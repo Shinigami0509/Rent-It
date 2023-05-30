@@ -118,14 +118,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "rentit");
+session_start();
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
+// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Retrieve the form values
     $name = $_POST["name"];
@@ -133,43 +128,64 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $price = $_POST["price"];
     $description = $_POST["description"];
 
-    // Handle the image file upload
-    $image = $_FILES["image"]["name"];
-    $image_tmp = $_FILES["image"]["tmp_name"];
-    $image_path = "uploads/" . $image;
+    // Retrieve the user ID from session
+    $userId = $_SESSION["user_id"]; // Replace with the actual session variable name storing user ID
 
-    // Move the uploaded file to the specified directory
-    move_uploaded_file($image_tmp, $image_path);
+    // Validate the form fields
+    if (!empty($name) && !empty($category) && !empty($price) && !empty($description)) {
+        // Connect to the database
+        $conn = mysqli_connect("localhost", "root", "", "rentit");
 
-    // Prepare the SQL statement
-    $sql = "INSERT INTO rental_items (name, description, image, price, quantity) VALUES (?, ?, ?, ?, ?)";
+        // Check connection
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
 
-    // Prepare the statement
-    $stmt = mysqli_prepare($conn, $sql);
+        // Handle the image file upload
+        $image = $_FILES["image"]["name"];
+        $image_tmp = $_FILES["image"]["tmp_name"];
+        $image_path = "uploads/" . $image;
 
-    // Bind the parameters
-    mysqli_stmt_bind_param($stmt, "ssssd", $name, $description, $image_path, $price, $quantity);
+        // Move the uploaded file to the specified directory
+        move_uploaded_file($image_tmp, $image_path);
 
-    // Set the quantity
-    $quantity = 10;
+        // Prepare the SQL statement
+        $sql = "INSERT INTO rental_items (name, description, image, price, user_id) VALUES (?, ?, ?, ?, ?)";
 
-    // Execute the statement
-    $result = mysqli_stmt_execute($stmt);
+        // Prepare the statement
+        $stmt = mysqli_prepare($conn, $sql);
 
-    // Check if a row was affected
-    if ($result) {
-        echo "Product added successfully.";
-    } else {
-        echo "Error adding product: " . mysqli_error($conn);
+        // Bind the parameters
+        mysqli_stmt_bind_param($stmt, "ssssi", $name, $description, $image_path, $price, $userId);
+
+        // Execute the statement
+        $result = mysqli_stmt_execute($stmt);
+
+        // Check if a row was affected
+        if ($result) {
+            mysqli_stmt_close($stmt);
+            mysqli_close($conn);
+
+            // Redirect to dashboard.php
+            echo "<div style=\"background-color: #f2f2f2; padding: 20px; border: 1px solid #ccc; border-radius: 5px; text-align: center;\">";
+            echo "<p style=\"font-size: 24px; color: #333;\">Product Successfully Added</p>";
+            echo "<a href=\"dashboard.php?redirect=true\" style=\"display: inline-block; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;\">Click here to go to the Home Page</a>";
+            echo "</div>";
+            exit();
+        } else {
+            echo "Error adding product: " . mysqli_error($conn);
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
+        
+        // Close the connection
+        mysqli_close($conn);
     }
-
-    // Close the statement
-    mysqli_stmt_close($stmt);
 }
-
-// Close the connection
-mysqli_close($conn);
 ?>
+
+
 
 <div class="container">
   <h1>Add Products</h1>
