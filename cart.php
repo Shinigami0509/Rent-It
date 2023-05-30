@@ -201,11 +201,11 @@
   });
 
   // Attach event listener to the checkout button
-  checkoutButton.addEventListener('click', () => {
-    // Add your logic for the checkout process here
-    // Redirect to the checkout page, submit a form, or perform any other necessary action
-    alert('Checkout functionality to be implemented.');
-  });
+checkoutButton.addEventListener('click', () => {
+  // Redirect to the checkout page
+  window.location.href = 'checkout.php';
+});
+
 
   // Function to update the total price
   function updateTotalPrice() {
