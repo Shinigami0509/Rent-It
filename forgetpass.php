@@ -99,7 +99,7 @@
       $mail->Host       = 'smtp.gmail.com'; // SMTP server
       $mail->SMTPAuth   = true;
       $mail->Username   = 'walidbin.kamal64@gmail.com'; // SMTP username
-      $mail->Password   = 'lwphdqfhxaagkcuw'; // SMTP password
+      $mail->Password   = 'hhmyftdmaerbttns'; // SMTP password
       $mail->SMTPSecure = 'ssl';
       $mail->Port       = 465;
 

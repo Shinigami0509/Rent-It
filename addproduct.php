@@ -1,53 +1,3 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $name = $_POST["name"];
-  $category = $_POST["category"];
-  $price = $_POST["price"];
-  $description = $_POST["description"];
-  
-  // Validate and process the form data further as needed
-  // For example, you can store the data in a database or perform other operations
-  
-  // Sample code to store the data in a database (assuming you have a database connection)
-  $servername = 'localhost';
-  $username = 'root';
-  $password = '';
-  $dbname = 'rentit';
-  
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // Prepare the SQL statement
-    $stmt = $conn->prepare("INSERT INTO uploads (name, category, price, description) VALUES (:name, :category, :price, :description)");
-    
-    // Bind the parameters
-    $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':category', $category);
-    $stmt->bindParam(':price', $price);
-    $stmt->bindParam(':description', $description);
-    
-    // Execute the statement
-    $stmt->execute();
-    
-    // Display success message
-    echo "Product added successfully!";
-  } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-  }
-  
-  // Close the database connection
-  $conn = null;
-}
-?>
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -161,7 +111,54 @@ form option {
     </style>  
 
     </head>
-        <body>        
+        <body>
+
+        <?php
+
+// Connect to the database
+$conn = mysqli_connect("localhost", "root", "", "rentit");
+
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Prepare the SQL statement
+$sql = "INSERT INTO rental_items (name, description, image, price, quantity) VALUES (?, ?, ?, ?, ?)";
+
+// Prepare the statement
+$stmt = mysqli_prepare($conn, $sql);
+
+// Set the parameters
+$name = "My Product";
+$description = "This is my product description.";
+$image = "product.jpg";
+$price = 100;
+$quantity = 10;
+
+// Bind the parameters
+mysqli_stmt_bind_param($stmt, "sssss", $name, $description, $image, $price, $quantity);
+
+// Execute the statement
+mysqli_stmt_execute($stmt);
+
+// Check if a row was affected
+if (mysqli_affected_rows($conn) > 0) {
+    echo "Product added successfully.";
+} else {
+    echo "Error adding product.";
+}
+
+// Close the statement
+mysqli_stmt_close($stmt);
+
+// Close the connection
+mysqli_close($conn);
+
+?>
+  
+  
+
 
         <div class="container">
          <h1>Add Products</h1>
@@ -225,7 +222,7 @@ form option {
         const description = document.querySelector('#product-description').value;
 
         // Do something with the values (e.g. send a request to the backend)
-        console.log(Adding product: ${name}, Price: ${price}, Description: ${description});
+        console.log(`Adding product: ${name}, Price: ${price}, Description: ${description}`);
 
         // Reset the form
         form.reset();
