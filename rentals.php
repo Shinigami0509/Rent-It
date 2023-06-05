@@ -300,6 +300,7 @@ if (mysqli_num_rows($result) > 0) {
         $rental_id = $row['id'];
         $name = $row['name'];
         $description = $row['description'];
+        $price = $row['price'];
         $image = $row['image'];
 
         // Display the rental item
@@ -307,6 +308,7 @@ if (mysqli_num_rows($result) > 0) {
         echo '<img src="' . $image . '" alt="' . $name . '" style="max-width: 100%; max-height: 200px;">';
         echo '<h3>' . $name . '</h3>';
         echo '<p>' . $description . '</p>';
+        echo '<p>' . $price . ' Tk</p>';
 
         // Create the form for renting the item
         echo '<form method="post" action="rent.php">';

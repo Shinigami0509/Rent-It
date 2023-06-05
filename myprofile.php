@@ -185,6 +185,22 @@ li a[href="logout.php"]:hover {
   background-color: #a94442;
 }
 
+.ordered-items-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: #fff;
+  background-color:#007bff ;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.ordered-items-btn:hover {
+  background-color: #0069d9;
+  cursor: pointer;
+}
+
 
 
 
@@ -210,6 +226,9 @@ li a[href="logout.php"]:hover {
 
             <a href="editprofile.php" class="edit-profile-btn">Edit Profile</a>            
         </div>
+        
+        <a href="ordered_items.php" class="ordered-items-btn">Ordered Items</a>
+
         <ul class="logout">
             <li><a href="logout.php">Logout</a></li>
         </ul>
